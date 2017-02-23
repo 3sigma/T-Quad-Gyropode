@@ -1,0 +1,197 @@
+{
+	"version": 1,
+	"allow_edit": true,
+	"plugins": [],
+	"panes": [
+		{
+			"title": "Télémétrie",
+			"width": 1,
+			"row": {
+				"2": 9,
+				"3": 1,
+				"4": 1,
+				"5": 7
+			},
+			"col": {
+				"2": 2,
+				"3": 2,
+				"4": 3,
+				"5": 3
+			},
+			"col_width": "2",
+			"widgets": [
+				{
+					"type": "plot",
+					"settings": {
+						"title": "Vitesses longitudinales",
+						"xaxis": "datasource_column",
+						"time": "datasources[\"ws\"][\"Temps\"]",
+						"time_window": 10,
+						"value": [
+							"datasources[\"ws\"][\"consigne_vx\"]",
+							"datasources[\"ws\"][\"vxmes\"]"
+						],
+						"y_axis_min_range": "-0.2,0.2",
+						"include_legend": true,
+						"legendStr": "vxref,vxmes",
+						"height": 3,
+						"pausable": true
+					}
+				},
+				{
+					"type": "plot",
+					"settings": {
+						"title": "Vitesses de rotation",
+						"xaxis": "datasource_column",
+						"time": "datasources[\"ws\"][\"Temps\"]",
+						"time_window": 10,
+						"value": [
+							"datasources[\"ws\"][\"consigne_xi\"]",
+							"datasources[\"ws\"][\"xiodo\"]",
+							"datasources[\"ws\"][\"gz\"]"
+						],
+						"y_axis_min_range": "-0.1,0.1",
+						"include_legend": true,
+						"legendStr": "xiref,ximes,xigyro",
+						"height": 3,
+						"pausable": true
+					}
+				},
+				{
+					"type": "plot",
+					"settings": {
+						"title": "Distance",
+						"xaxis": "datasource_column",
+						"time": "datasources[\"ws\"][\"Temps\"]",
+						"time_window": 10,
+						"value": [
+							"datasources[\"ws\"][\"distance\"]",
+							"datasources[\"ws\"][\"distanceFiltre\"]"
+						],
+						"y_axis_min_range": "-10,10",
+						"include_legend": true,
+						"legendStr": "distance, distance filtrée",
+						"height": 3,
+						"pausable": true
+					}
+				}
+			]
+		},
+		{
+			"title": "Démarrage",
+			"width": 1,
+			"row": {
+				"3": 1,
+				"4": 9
+			},
+			"col": {
+				"3": 1,
+				"4": 2
+			},
+			"col_width": 1,
+			"widgets": [
+				{
+					"type": "sshcommand",
+					"settings": {
+						"title": "Marche / Arrêt de l'application",
+						"style": "switch",
+						"host": "192.168.0.199",
+						"login": "root",
+						"password": "tquad",
+						"oncommand": "/root/programmes_python/startGyropode.sh",
+						"offcommand": "/root/programmes_python/stopPython.sh",
+						"ontext": "ON",
+						"offtext": "OFF",
+						"initialstate": false,
+						"caption": "Switch ON"
+					}
+				}
+			]
+		},
+		{
+			"title": "Pilotage",
+			"width": 1,
+			"row": {
+				"3": 5,
+				"4": 1
+			},
+			"col": {
+				"3": 1,
+				"4": 1
+			},
+			"col_width": 1,
+			"widgets": [
+				{
+					"type": "joypad2roues",
+					"settings": {
+						"title": "Vitesses longitudinale et de rotation",
+						"variablevxref": "datasources[\"ws\"][\"vxref\"]",
+						"variablexiref": "datasources[\"ws\"][\"xiref\"]"
+					}
+				}
+			]
+		},
+		{
+			"title": "Mesure de la vitesse de rotation",
+			"width": 1,
+			"row": {
+				"3": 15,
+				"4": 15
+			},
+			"col": {
+				"3": 1,
+				"4": 1
+			},
+			"col_width": 1,
+			"widgets": [
+				{
+					"type": "switchbutton",
+					"settings": {
+						"variable": "datasources[\"ws\"][\"source_ximes\"]",
+						"yestext": "Gyro",
+						"notext": "Odo",
+						"initialstate": false
+					}
+				}
+			]
+		},
+		{
+			"title": "Moniteur série",
+			"width": 1,
+			"row": {
+				"3": 19,
+				"4": 23
+			},
+			"col": {
+				"3": 1,
+				"4": 1
+			},
+			"col_width": "1",
+			"widgets": [
+				{
+					"type": "textarea",
+					"settings": {
+						"nblines_window": "10",
+						"value": [
+							"datasources[\"ws\"][\"Raw\"]"
+						]
+					}
+				}
+			]
+		}
+	],
+	"datasources": [
+		{
+			"name": "ws",
+			"type": "websocket",
+			"settings": {
+				"host": "ws://192.168.0.199:9090/ws",
+				"variables_to_send": "vxref,xiref,source_ximes",
+				"refresh_rate": "500",
+				"checksum": "none",
+				"name": "ws"
+			}
+		}
+	],
+	"columns": 3
+}
