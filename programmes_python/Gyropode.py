@@ -7,7 +7,7 @@
 # http://boutique.3sigma.fr/12-robots
 #
 # Auteur: 3Sigma
-# Version 1.1.1 - 23/02/2017
+# Version 1.1.2 - 23/02/2017
 ##################################################################################
 
 # Importe les fonctions Arduino pour Python
@@ -252,8 +252,12 @@ def CalculVitesse():
             codeurArriereGaucheDeltaPosPrec = 0
 
         # Mesure de la pesanteur
-        accel = imu.readAccel()
-        ax = accel['z'] * 9.81
+        try:
+            accel = imu.readAccel()
+            ax = accel['z'] * 9.81
+        except:
+            ax = 0
+            print("Erreur lecture pesanteur")
         
         # Si l'accélération change de signe, cela signifie que le robot a été redressé pour le faire démarrer
         if (ax * signe_ax) <0:
