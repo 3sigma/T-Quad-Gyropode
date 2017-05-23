@@ -60,17 +60,17 @@
 				{
 					"type": "plot",
 					"settings": {
-						"title": "Distance",
+						"title": "Angle par rapport à la verticale",
 						"xaxis": "datasource_column",
 						"time": "datasources[\"ws\"][\"Temps\"]",
 						"time_window": 10,
 						"value": [
-							"datasources[\"ws\"][\"distance\"]",
-							"datasources[\"ws\"][\"distanceFiltre\"]"
+							"datasources[\"ws\"][\"theta\"]"
 						],
 						"y_axis_min_range": "-10,10",
+						"y2_axis_min_range": "-10,10",
 						"include_legend": true,
-						"legendStr": "distance, distance filtrée",
+						"legendStr": "Theta (deg)",
 						"height": 3,
 						"pausable": true
 					}

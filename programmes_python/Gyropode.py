@@ -20,6 +20,7 @@ import threading
 import signal
 import json
 import sys
+import math
 
 # Pour la détection d'adresse IP
 import socket
@@ -254,7 +255,9 @@ def CalculVitesse():
         # Mesure de la pesanteur
         try:
             accel = imu.readAccel()
-            ax = accel['z'] * 9.81
+            thetaest = math.asin(max(-1,min(accel['z'],1)))
+            ax = thetaest * 9.81
+
         except:
             ax = 0
             print("Erreur lecture pesanteur")
@@ -266,9 +269,10 @@ def CalculVitesse():
             startedTQuad = True
             print "Demarrage"
 
-            # Les consignes reçues sont initilisées à zéro
+            # Les consignes reçues et la mesure d'angle sont initialisées à zéro
             vxref = 0.
             xiref = 0.
+            thetaest = 0.
 
 
         else:
@@ -276,7 +280,6 @@ def CalculVitesse():
             I_vx = 0.
             I_omega = 0.
             I_xi = 0.
-            thetaest = 0.
             thetamesprec = 0.
             omegaprec = 0.
             gzprec = 0.
@@ -352,6 +355,7 @@ def CalculVitesse():
 
         # Sinon, cela signifie que le robot est tombé
         else:
+            print "Asservissement desactive"
             # On désactive l'asservissement
             en = 0.
             startedTQuad = False
@@ -647,7 +651,7 @@ class WSHandler(tornado.websocket.WebSocketHandler):
         xiref = 0.
 
     def sendToSocket(self):
-        global socketOK, vxmes, omegaArriereDroit, omegaArriereGauche, gz, xiodo, vxref, xiref
+        global socketOK, vxmes, omegaArriereDroit, omegaArriereGauche, gz, xiodo, vxref, xiref, thetaest
         
         tcourant = time.time() - T0
         aEnvoyer = json.dumps({'Temps':("%.2f" % tcourant), \
@@ -658,11 +662,13 @@ class WSHandler(tornado.websocket.WebSocketHandler):
                                 'distance':("%d" % distance), \
                                 'distanceFiltre':("%d" % distanceFiltre), \
                                 'gz':("%.2f" % gz), \
+                                'theta':("%.2f" % (thetaest * 180 / math.pi)), \
                                 'Raw':("%.2f" % tcourant) \
                                 + "," + ("%.2f" % vxmes) \
                                 + "," + ("%.2f" % ximes) \
                                 + "," + ("%d" % distance) \
                                 + "," + ("%d" % distanceFiltre) \
+                                + "," + ("%d" % (thetaest * 180 / math.pi)) \
                                 + "," + ("%.2f" % gz) \
                                 })
                                 
